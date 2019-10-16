@@ -9,7 +9,7 @@
 
 The character type that is output can be changed by putting the character specified in the `chr` argument.
 
-i.e. **<span style="color: yellow; ">[GET]</span>** `http://hostname.example.co.jp/Generate_Random_String/?chr=aA1@`
+i.e. **[GET]** `http://hostname.example.co.jp/Generate_Random_String/?chr=aA1@`
 
 | Char | Description |
 |:---- |:----------- |
