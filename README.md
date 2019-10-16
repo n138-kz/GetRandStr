@@ -5,8 +5,8 @@
 ### General
 **[GET]** http://hostname.example.co.jp/Generate_Random_String/ 
 
+---
 ### Option
-
 The character type that is output can be changed by putting the character specified in the `chr` argument.
 
 i.e. **[GET]** `http://hostname.example.co.jp/Generate_Random_String/?chr=aA1@`
@@ -23,3 +23,10 @@ You can change the number of characters by putting a number in the `len` argumen
 i.e. **[GET]** `http://hostname.example.co.jp/Generate_Random_String/?len=12`
 
 Options `chr` and `len` can be used in combination
+
+---
+### Default
+| argument | value |
+|:---- |:----------- |
+| chr | aA1@ |
+| len | 12 |
