@@ -1,16 +1,14 @@
-# Generate Random String
-
-## Notice
-### Before use
+# Before use
 1. Install the webserver(recommended the apache) and php.
-1. Install the below php library.
-  - php-mbstring
+1. Install the php-mbstring on php library.
 
+# How to use
+## Normal access
+1. Download the this repos data to document root on your server.
+1. Access the http://yourserver/GetRandStr
 
-## Hot to Use
-
-### General
-**[GET]** http://hostname.example.co.jp/Generate_Random_String/ 
+## API access
+1. Request to http://yourserver/GetRandStr, method is **GET** 
 
 ---
 ### Option
