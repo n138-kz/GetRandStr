@@ -1,4 +1,11 @@
-# Generate_Random_String
+# Generate Random String
+
+## Notice
+### Before use
+1. Install the webserver(recommended the apache) and php.
+1. Install the below php library.
+  - php-mbstring
+
 
 ## Hot to Use
 
