@@ -49,6 +49,9 @@
         .fail(function(data){
           console.log(data);
           alert('Error\nCannot connect to server.');
+        })
+        .always(function(data){
+          $('table+p span').text(location.origin + location.pathname + 'api/' + '?len=' + document.requestApi.apiLength.value + '&chr=' + document.requestApi.apiChk.value);
         });
       }
       $(function(){
@@ -134,6 +137,7 @@
             <td><textarea name="apiResult" readonly></textarea></td>
           </tr>
         </table>
+        <p>[API/GET] <span></span></p>
       </form>
     </div>
   </body>
