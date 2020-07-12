@@ -45,6 +45,27 @@
           console.log(data);
           document.requestApi.apiResult.value=data.string;
           navigator.clipboard.writeText( data.string );
+
+          /* Get the legend */
+          $.ajax({
+            url: '../GetStrLegend/check/',
+            type: 'post',
+            data: {
+              textdata: data.string,
+            }
+          })
+          .done(function(data){
+            $('#legendlist').empty();
+            (data.data).forEach((item, i) => {
+              $('#legendlist').append('<tr><td>' + item[0] + '</td><td>' + item[1] + '</td></tr>')
+            });
+
+          })
+          .fail(function(data){
+            console.log(data);
+          });
+
+
         })
         .fail(function(data){
           console.log(data);
@@ -138,6 +159,7 @@
           </tr>
         </table>
         <p>[API/GET] <span></span></p>
+        <table border="1" id="legendlist"></table>
       </form>
     </div>
   </body>
