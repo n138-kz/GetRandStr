@@ -17,6 +17,11 @@
       table td, table th{
         text-align: center;
       }
+      table td ol{
+        text-align: left;
+        list-style-type: none;
+        padding-left: 0;
+      }
       table textarea{
         resize: both;
       }
@@ -32,7 +37,8 @@
         $.ajax({
           url: './api/',
           data: {
-            len: document.requestApi.apiLength.value
+            len: document.requestApi.apiLength.value,
+            chr: document.requestApi.apiChk.value,
           }
         })
         .done(function(data){
@@ -57,6 +63,43 @@
         });
 
         $('[name=apiLength]').change(function(){
+          document.requestApi.apiLenBar.value=$(this).val();
+          issueApi();
+        });
+
+        $('[name=apiChkL]').change(function(){
+          document.requestApi.apiChk.value = '';
+          if ( document.requestApi.apiChkL.checked ) { document.requestApi.apiChk.value = document.requestApi.apiChk.value + 'a'; }
+          if ( document.requestApi.apiChkU.checked ) { document.requestApi.apiChk.value = document.requestApi.apiChk.value + 'A'; }
+          if ( document.requestApi.apiChkN.checked ) { document.requestApi.apiChk.value = document.requestApi.apiChk.value + '1'; }
+          if ( document.requestApi.apiChkS.checked ) { document.requestApi.apiChk.value = document.requestApi.apiChk.value + '@'; }
+          issueApi();
+        });
+
+        $('[name=apiChkU]').change(function(){
+          document.requestApi.apiChk.value = '';
+          if ( document.requestApi.apiChkL.checked ) { document.requestApi.apiChk.value = document.requestApi.apiChk.value + 'a'; }
+          if ( document.requestApi.apiChkU.checked ) { document.requestApi.apiChk.value = document.requestApi.apiChk.value + 'A'; }
+          if ( document.requestApi.apiChkN.checked ) { document.requestApi.apiChk.value = document.requestApi.apiChk.value + '1'; }
+          if ( document.requestApi.apiChkS.checked ) { document.requestApi.apiChk.value = document.requestApi.apiChk.value + '@'; }
+          issueApi();
+        });
+
+        $('[name=apiChkN]').change(function(){
+          document.requestApi.apiChk.value = '';
+          if ( document.requestApi.apiChkL.checked ) { document.requestApi.apiChk.value = document.requestApi.apiChk.value + 'a'; }
+          if ( document.requestApi.apiChkU.checked ) { document.requestApi.apiChk.value = document.requestApi.apiChk.value + 'A'; }
+          if ( document.requestApi.apiChkN.checked ) { document.requestApi.apiChk.value = document.requestApi.apiChk.value + '1'; }
+          if ( document.requestApi.apiChkS.checked ) { document.requestApi.apiChk.value = document.requestApi.apiChk.value + '@'; }
+          issueApi();
+        });
+
+        $('[name=apiChkS]').change(function(){
+          document.requestApi.apiChk.value = '';
+          if ( document.requestApi.apiChkL.checked ) { document.requestApi.apiChk.value = document.requestApi.apiChk.value + 'a'; }
+          if ( document.requestApi.apiChkU.checked ) { document.requestApi.apiChk.value = document.requestApi.apiChk.value + 'A'; }
+          if ( document.requestApi.apiChkN.checked ) { document.requestApi.apiChk.value = document.requestApi.apiChk.value + '1'; }
+          if ( document.requestApi.apiChkS.checked ) { document.requestApi.apiChk.value = document.requestApi.apiChk.value + '@'; }
           issueApi();
         });
 
@@ -68,15 +111,25 @@
       <form action="" name="requestApi">
         <table border="1">
           <tr>
+            <th>Character</th>
             <th>Length</th>
             <th>Results</th>
           </tr>
           <tr>
             <td>
-              <input type="range" name="apiLenBar" value="8" min="6" max="128"><br />
-              <input type="number" name="apiLength" value="8" min="6" max="128">
+              <input type="hidden" name="apiChk" value="aA1@">
+              <ol>
+                <li><label><input type="checkbox" checked name="apiChkL" value="a">英小字</label></li>
+                <li><label><input type="checkbox" checked name="apiChkU" value="A">英大字</label></li>
+                <li><label><input type="checkbox" checked name="apiChkN" value="1">数字</label></li>
+                <li><label><input type="checkbox" checked name="apiChkS" value="@">記号</label></li>
+              </ol>
             </td>
-            <td><textarea name="apiResult"></textarea></td>
+            <td>
+              <input type="range" name="apiLenBar" value="8" min="6" max="8192"><br />
+              <input type="number" name="apiLength" value="8" min="6" max="65535">
+            </td>
+            <td><textarea name="apiResult" readonly></textarea></td>
           </tr>
         </table>
       </form>
