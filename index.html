@@ -32,6 +32,17 @@
       }
     </script>
     <script type="text/javascript">
+      $(function(){
+        // Disabled the enter key
+        $('form').on('keypress', function(ke){
+          if (ke.which == 13) {
+            $('[name=apiLength]').change();
+            return false;
+          }
+        });
+      });
+    </script>
+    <script type="text/javascript">
       function issueApi(){
         document.requestApi.apiResult.value='';
         $.ajax({
