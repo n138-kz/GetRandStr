@@ -57,6 +57,12 @@
           document.requestApi.apiResult.value=data.string;
           navigator.clipboard.writeText( data.string );
 
+          // Save the result log
+          if( localStorage.getItem((btoa(location.href)).slice(0, 16) + '.GetRandStr.apiResult') === null ){
+            localStorage.setItem((btoa(location.href)).slice(0, 16) + '.GetRandStr.apiResult', JSON.stringify([data.string]));
+          }
+          //localStorage.setItem((btoa(location.href)).slice(0, 16) + '.GetRandStr.apiResult', JSON.stringify([]));
+
           /* Get the legend */
           $.ajax({
             url: '../GetStrLegend/check/',
