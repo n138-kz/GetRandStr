@@ -16,7 +16,7 @@
 Require_once('GetRandStr.php');
 $genRandomStr = new n138\genRandomStr();
 $genRandomStr->setLength(24); // change the length. default is 8 len.
-$genRandomStr->setCharType(12); // change the character. default is all char.
+$genRandomStr->setCharType(12); // change the character. default is 15(all) char.
 echo $genRandomStr->getResult();
 ```
 
