@@ -5,7 +5,7 @@
 1. Nothing to do. Only the download.
 
 ## How to use
-1. Download the `GetRandStr.php`.
+1. Download the [GetRandStr.php](GetRandStr.php).
 1. Import(support is `Require()`) and call class.
    Note. this file is use the namespace.
          When calling a class, prefix the class name with `n138`.
