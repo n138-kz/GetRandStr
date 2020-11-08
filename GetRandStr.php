@@ -7,13 +7,6 @@ class genRandomStr
   */
   private $len = 8;
   private $chr = 15;
-  /*
-  all: 1111 = 15
-  num: 1000 =  8
-  sym: 0100 =  4
-  low: 0010 =  2
-  upp: 0001 =  1
-  */
   private $str = [
     'alpha_lower' => array(),
     'alpha_upper' => array(),
