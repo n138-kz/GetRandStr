@@ -1,4 +1,6 @@
 # GetRandStr (Class)
+![URI](http://img.shields.io/badge/state-active-blue.svg?style=flat)
+
 ## Before use
 1. Nothing to do. Only the download.
 
@@ -18,8 +20,34 @@ $genRandomStr->setCharType(12); // change the character. default is all char.
 echo $genRandomStr->getResult();
 ```
 
+## Operation check
+![URI](http://img.shields.io/badge/php-5.4.16-yellow.svg?style=flat)
+![URI](http://img.shields.io/badge/httpd-Apache/2.4.6-yellow.svg?style=flat)
+![URI](http://img.shields.io/badge/Kernel-3.10.0-yellow.svg?style=flat)
+![URI](http://img.shields.io/badge/CentOS-Linux%20release%207.8.2003-yellow.svg?style=flat)
+```bash
+$ php -v
+PHP 5.4.16 (cli) (built: Apr  1 2020 04:07:17)
+Copyright (c) 1997-2013 The PHP Group
+Zend Engine v2.4.0, Copyright (c) 1998-2013 Zend Technologies
+```
+```bash
+$ httpd -v
+Server version: Apache/2.4.6 (CentOS)
+Server built:   Apr  2 2020 13:13:23
+```
+```bash
+$ uname -r
+3.10.0-1127.19.1.el7.x86_64
+```
+```bash
+$ cat /etc/redhat-release
+CentOS Linux release 7.8.2003 (Core)
+```
 
+---
 # GetRandStr (API)
+![URI](http://img.shields.io/badge/state-devStop-yellow.svg?style=flat)
 
 ## Before use
 1. Install the webserver(recommended the apache) and php.
