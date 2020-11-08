@@ -46,52 +46,12 @@ class genRandomStr
   public function __construct()
   {
     $a=[
-      [ 'alpha_lower',  97, 122],
-      [ 'alpha_upper',  65,  90],
-      [ 'numeric',      48,  57],
-      [ 'symbols',      33,  47],
-      [ 'symbols',      58,  64],
-      [ 'symbols',      91,  96],
-      [ 'symbols',     123, 126],
+      [ 'alpha_lower',  97, 122], [ 'alpha_upper',  65,  90], [ 'numeric',      48,  57],
+      [ 'symbols',      33,  47], [ 'symbols',      58,  64], [ 'symbols',      91,  96], [ 'symbols',     123, 126],
     ];
     foreach ($a as $key => $val) {
       for( $i=$val[1]; $i<=$val[2]; $i++ ){ $this->str[$val[0]][count( $this->str[$val[0]] )] = chr($i); }
     }
-
-    $c = 'alpha_lower';
-    $s =  97;
-    $e = 122;
-    for( $i=$s;$i<=$e;$i++ ){ $this->str[$c][count($this->str[$c])] = chr($i); }
-
-    $c = 'alpha_upper';
-    $s =  65;
-    $e =  90;
-    for( $i=$s;$i<=$e;$i++ ){ $this->str[$c][count($this->str[$c])] = chr($i); }
-
-    $c = 'numeric';
-    $s =  48;
-    $e =  57;
-    for( $i=$s;$i<=$e;$i++ ){ $this->str[$c][count($this->str[$c])] = chr($i); }
-
-    $c = 'symbols';
-    $s =  33;
-    $e =  47;
-    for( $i=$s;$i<=$e;$i++ ){ $this->str[$c][count($this->str[$c])] = chr($i); }
-
-    #$c = 'symbols';
-    $s =  58;
-    $e =  64;
-    for( $i=$s;$i<=$e;$i++ ){ $this->str[$c][count($this->str[$c])] = chr($i); }
-
-    #$c = 'symbols';
-    $s =  91;
-    $e =  96;
-    for( $i=$s;$i<=$e;$i++ ){ $this->str[$c][count($this->str[$c])] = chr($i); }
-
-    #$c = 'symbols';
-    $s = 123;
-    $e = 126;
-    for( $i=$s;$i<=$e;$i++ ){ $this->str[$c][count($this->str[$c])] = chr($i); }
   }
 
 }
