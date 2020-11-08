@@ -11,13 +11,28 @@
          When calling a class, prefix the class name with `n138`.
 
 ## Sample
-```php:_bin_sample.php
+```php:sample.php
 <?php
 Require_once('GetRandStr.php');
 $genRandomStr = new n138\genRandomStr();
 $genRandomStr->setLength(24); // change the length. default is 8 len.
 $genRandomStr->setCharType(12); // change the character. default is 15(all) char.
 echo $genRandomStr->getResult();
+```
+
+### $genRandomStr->setCharType(?)
+| Type | Mask | Value |
+| ---- | ---- | ----- |
+| all | 1111 | 15 |
+| num | 1000 | 8 |
+| sym | 0100  | 4 |
+| low | 0010 | 2 |
+| up | 0001 | 1 |
+
+```bash:sample.php
+$ php sample.php ; echo '';
+0<#,^(5[@\:)&#>!{*5~<$5)
+$
 ```
 
 ## Operation check
