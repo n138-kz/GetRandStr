@@ -83,7 +83,7 @@
           console.log(randstr);
           if (location.protocol=="https:") {
             try {
-              var promise = navigator.clipboard.writeText(randstr);
+              var promise = navigator.clipboard.writeText(randstr['result']);
               console.log(promise);
             } catch(e) {
               console.log(e);
@@ -189,13 +189,13 @@
         $(document).on('click', 'div#print_r input', function(){
           $(this).select();
           if (location.protocol=="https:") {
-            try { var promise = navigator.clipboard.writeText(randstr); console.log(promise); } catch(e) { console.log(e); }
+            try { var promise = navigator.clipboard.writeText($(this).val()); console.log(promise); } catch(e) { console.log(e); }
           }
         });
         $(document).on('click', 'div#print_h input', function(){
           $(this).select();
           if (location.protocol=="https:") {
-            try { var promise = navigator.clipboard.writeText(randstr); console.log(promise); } catch(e) { console.log(e); }
+            try { var promise = navigator.clipboard.writeText($(this).val()); console.log(promise); } catch(e) { console.log(e); }
           }
         });
 
