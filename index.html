@@ -74,11 +74,21 @@
       sessionStorage.setItem('hst', JSON.stringify(hst));
 
       $('div.print_r:last-child div').empty();
-      arr.forEach(function(i){
+      arr.forEach(function(randstr){
         $('div.print_r:last-child').append('<div />');
         $('div.print_r:last-child div:last-child').append('<input />');
         $('div.print_r:last-child div:last-child input:last-child').attr('readonly', true);
-        $('div.print_r:last-child div:last-child input:last-child').val(i);
+        $('div.print_r:last-child div:last-child input:last-child').val(randstr);
+
+        console.log(randstr);
+        if (location.protocol=="https:") {
+          try {
+            var promise = navigator.clipboard.writeText(randstr);
+            console.log(promise);
+          } catch(e) {
+            console.log(e);
+          }
+        }
       });
     }
     function sendSetup()
