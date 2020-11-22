@@ -117,7 +117,7 @@
       {
         $('#sub1 #print_h table').remove();
         $('#sub1 #print_h').append('<table />');
-        $('#sub1 #print_h table:last-child').attr('border', 1);
+        $('#sub1 #print_h table:last-child').attr('border', 0);
         $('#sub1 #print_h table:last-child').append('<tr />');
         $('#sub1 #print_h table:last-child tr:last-child').append('<th />');
         $('#sub1 #print_h table:last-child tr:last-child th:last-child').text('#');
@@ -173,9 +173,15 @@
         $('#history_broken').click(function(){ sessionStorage.removeItem('hst'); location.reload(); });
         $(document).on('click', 'div#print_r input', function(){
           $(this).select();
+          if (location.protocol=="https:") {
+            try { var promise = navigator.clipboard.writeText(randstr); console.log(promise); } catch(e) { console.log(e); }
+          }
         });
         $(document).on('click', 'div#print_h input', function(){
           $(this).select();
+          if (location.protocol=="https:") {
+            try { var promise = navigator.clipboard.writeText(randstr); console.log(promise); } catch(e) { console.log(e); }
+          }
         });
 
       });
@@ -225,9 +231,26 @@
         width: 100%;
         resize: both;
       }
-      section##sub1 div#print_h input
+      section#sub1 div#print_h table
+      {
+        background-color: ivory;
+        width: 600px;
+      }
+      section#sub1 div#print_h table tr:nth-child(2n+1)
+      {
+        background-color: oldlace;
+      }
+      section#sub1 div#print_h table tr:hover
+      {
+        background-color: aliceblue;
+        cursor: default;
+      }
+      section#sub1 div#print_h input
       {
         border-width: 0;
+        width: 100%;
+        cursor: default;
+        background-color: rgba(0, 0, 0, 0);
       }
       .float_clear_both
       {
