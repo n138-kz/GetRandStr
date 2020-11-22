@@ -1,108 +1,26 @@
 <?php
-header('content-type: text/plain');
+// タイムゾーン設定
+date_default_timezone_set('Asia/Tokyo');
 
-if (! (mb_strtolower($_SERVER["REQUEST_METHOD"]) == 'post' || mb_strtolower($_SERVER["REQUEST_METHOD"]) == 'get') ) {
-  header('HTTP/1.1 405 Method Not Allowed');
-  exit();
+// キャッシュ無効化
+header('Content-Type: Application/json');
+header("Cache-Control: no-cache, must-revalidate");
+header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
+header('Pragma: no-cache');
+
+// レスポンス用変数(array)準備
+$response_data['result']=FALSE;
+$response_data['detail']='INIT';
+$response_data['remote']=$_SERVER['REMOTE_ADDR'];
+
+// メソッドチェック、HTTP/GET以外はすべて拒否
+if (strtolower($_SERVER['REQUEST_METHOD']) != 'get') {
+  $response_data['detail']='Invalid request.';
+  http_response_code(405) ;
+  echo json_encode($response_data);exit();
 }
 
-header('content-type: application/json');
-$errres = array(
-   'errmesg' => ''
-  ,'string'  => ''
-);
+$response_data = array_merge($response_data, $_GET);
 
-$randomstring_config = array(
-   'length'  => 12
-  ,'chrtype' => 'aA1@'
-);
-
-try{
-  if (mb_strtolower($_SERVER["REQUEST_METHOD"]) != 'get') {
-    throw new Exception('Method error. current method is ' . mb_strtolower($_SERVER["REQUEST_METHOD"]));
-  }
-  if ( isset( $_GET['chr'] ) ) {
-    $randomstring_config['chrtype'] = $_GET['chr'];
-  }
-  if ( isset( $_GET['len'] ) ) {
-    $randomstring_config['length'] = (int)$_GET['len'];
-  }
-
-  $strarr = array(
-     'alpha_lower' => array()
-    ,'alpha_upper' => array()
-    ,'numeric'     => array()
-    ,'symbols'     => array()
-    ,'mergestr'    => array()
-  );
-
-  $c = 'alpha_lower';
-  $s =  97;
-  $e = 122;
-  for( $i=$s;$i<=$e;$i++ ){ $strarr[$c][count($strarr[$c])] = chr($i); }
-
-  $c = 'alpha_upper';
-  $s =  65;
-  $e =  90;
-  for( $i=$s;$i<=$e;$i++ ){ $strarr[$c][count($strarr[$c])] = chr($i); }
-
-  $c = 'numeric';
-  $s =  48;
-  $e =  57;
-  for( $i=$s;$i<=$e;$i++ ){ $strarr[$c][count($strarr[$c])] = chr($i); }
-
-  $c = 'symbols';
-  $s =  33;
-  $e =  47;
-  for( $i=$s;$i<=$e;$i++ ){ $strarr[$c][count($strarr[$c])] = chr($i); }
-
-  $s =  58;
-  $e =  64;
-  for( $i=$s;$i<=$e;$i++ ){ $strarr[$c][count($strarr[$c])] = chr($i); }
-
-  $s =  91;
-  $e =  96;
-  for( $i=$s;$i<=$e;$i++ ){ $strarr[$c][count($strarr[$c])] = chr($i); }
-
-  $s = 123;
-  $e = 126;
-  for( $i=$s;$i<=$e;$i++ ){ $strarr[$c][count($strarr[$c])] = chr($i); }
-
-  if( strpos( $randomstring_config['chrtype'], 'a' ) !== FALSE ){
-    foreach( $strarr['alpha_lower'] as $key => $val ){
-      $strarr['mergestr'][count($strarr['mergestr'])] = $val;
-    }
-  }
-  if( strpos( $randomstring_config['chrtype'], 'A' ) !== FALSE ){
-    foreach( $strarr['alpha_upper'] as $key => $val ){
-      $strarr['mergestr'][count($strarr['mergestr'])] = $val;
-    }
-  }
-  if( strpos( $randomstring_config['chrtype'], '1' ) !== FALSE ){
-    foreach( $strarr['numeric'] as $key => $val ){
-      $strarr['mergestr'][count($strarr['mergestr'])] = $val;
-    }
-  }
-  if( strpos( $randomstring_config['chrtype'], '@' ) !== FALSE ){
-    foreach( $strarr['symbols'] as $key => $val ){
-      $strarr['mergestr'][count($strarr['mergestr'])] = $val;
-    }
-  }
-
-  if ( count ( $strarr['mergestr'] ) > 0 ){
-    for($i=0;$i<$randomstring_config['length'];$i++){
-      $errres['string'] .= $strarr['mergestr'][rand(0,(count($strarr['mergestr']))-1)];
-    }
-  } else {
-    $errres['string'] = '';
-  }
-
-} catch (Exception $e){
-  $errres['errmesg'] = $e->getMessage();
-}
-
-$errres = json_encode( $errres );
-
-echo $errres ;
-
-exit();
+// ライブラリ読み込み
+Require_once('../GetRandStr.php');
