@@ -148,6 +148,19 @@
 
     <script type="text/javascript">
       $(function(){
+        let query=location.search.replace('?','').split('&');
+        query.forEach(function(item){
+          sub_query1=item.split('=');
+          if(false){
+          } else if(sub_query1[0]=='chr'){
+            if( (sub_query1[1] & 8) == 0 ){ $('#chr_3').attr('checked', false); } // numeric
+            if( (sub_query1[1] & 4) == 0 ){ $('#chr_4').attr('checked', false); } // symbols
+            if( (sub_query1[1] & 2) == 0 ){ $('#chr_1').attr('checked', false); } // alpha_lower
+            if( (sub_query1[1] & 1) == 0 ){ $('#chr_2').attr('checked', false); } // alpha_upper
+          } else if(sub_query1[0]=='len'){
+            $('#len').val(sub_query1[1]);
+          }
+        });
 
         $('#len_gui')   .change(function(){ $('#len').val(     $(this).val()); });
         $('#len')       .change(function(){ $('#len_gui').val( $(this).val()); });
