@@ -88,32 +88,51 @@
       sessionStorage.setItem('len', $('#len').val());
       sessionStorage.setItem('chr', $('#chr').val());
       sessionStorage.setItem('res', JSON.stringify([]));
-      for (var i = 0; i < 3; i++) {
+      for (var i = 0; i < parseInt($('#cnt').val(), 10); i++) {
         sendRequest();
       }
       setTimeout(function () {
         postProc();
-      }, 500);
+      }, 250);
     }
     </script>
 
     <script type="text/javascript">
       $(function(){
 
-        sendSetup();
-        $('div.preference input[type=submit]').click(function(){ sendSetup(); });
-        $(document).on('click', 'div.print_r input', function(){
-          console.log($(this));
-          $(this).select();
-        });
-
         $('#len_gui').change(function(){
           $('#len').val($(this).val());
+        });
+
+        $('#len').change(function(){
+          $('#len_gui').val($(this).val());
+        });
+
+        $('#len_gui').mousemove(function(){
+          $('#len_gui').change();
+        });
+
+        $('#cnt_gui').change(function(){
+          $('#cnt').val($(this).val());
+        });
+
+        $('#cnt').change(function(){
+          $('#cnt_gui').val($(this).val());
+        });
+
+        $('#cnt_gui').mousemove(function(){
+          $('#cnt_gui').change();
         });
 
         $('#len, #len_gui').attr({
           min: 1,
           value: 8,
+        });
+
+        $('#cnt, #cnt_gui').attr({
+          min: 1,
+          max: 9,
+          value: 1,
         });
 
         $('input.chr').click(function(){
@@ -123,6 +142,13 @@
           });
           $('#chr').val(chr);
         });
+
+        sendSetup();
+        $('div.preference input[type=submit]').click(function(){ sendSetup(); });
+        $(document).on('click', 'div.print_r input', function(){
+          $(this).select();
+        });
+
       });
     </script>
 
@@ -179,6 +205,11 @@
         <h4>Length</h4>
         <div><input type="range" id="len_gui"></div>
         <div><input type="number" id="len"></div>
+      </div>
+      <div class="preference _cnt">
+        <h4>Loop</h4>
+        <div><input type="range" id="cnt_gui"></div>
+        <div><input type="number" id="cnt"></div>
       </div>
       <div class="preference _chr">
         <h4>Chars</h4>
