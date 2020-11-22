@@ -37,102 +37,124 @@
     </script>
     <!--==================================================-->
     <script type="text/javascript">
-    function sendRequest()
-    {
-      $.ajax({
-        url: './api/',
-        type: 'GET',
-        async: true,
-        timeout: 5000,
-        data: {
-          len: sessionStorage.getItem('len'),
-          chr: sessionStorage.getItem('chr'),
-        }
-      })
-      .done(function(rawdata){
-        console.log(rawdata);
-        let arr=JSON.parse(sessionStorage.getItem('res'));
-        arr.push(rawdata.detail);
-        sessionStorage.setItem('res', JSON.stringify(arr));
-      })
-      .fail(function(rawdata){
-        console.log(rawdata);
-      })
-      .always(function(){
-        grecaptcha_init();
-      });
-    }
-    function postProc()
-    {
-      let arr=JSON.parse(sessionStorage.getItem('res')); // current
-      let hst=JSON.parse(sessionStorage.getItem('hst')); // history
-      if (hst==null) {
-        hst=arr;
-      } else {
-        hst=hst.concat(arr);
-      }
-      sessionStorage.setItem('hst', JSON.stringify(hst));
-
-      $('div.print_r:last-child div').empty();
-      arr.forEach(function(randstr){
-        $('div.print_r:last-child').append('<div />');
-        $('div.print_r:last-child div:last-child').append('<input />');
-        $('div.print_r:last-child div:last-child input:last-child').attr('readonly', true);
-        $('div.print_r:last-child div:last-child input:last-child').val(randstr);
-
-        console.log(randstr);
-        if (location.protocol=="https:") {
-          try {
-            var promise = navigator.clipboard.writeText(randstr);
-            console.log(promise);
-          } catch(e) {
-            console.log(e);
+      function sendRequest()
+      {
+        $.ajax({
+          url: './api/',
+          type: 'GET',
+          async: true,
+          timeout: 5000,
+          data: {
+            len: sessionStorage.getItem('len'),
+            chr: sessionStorage.getItem('chr'),
           }
-        }
-      });
-    }
-    function sendSetup()
-    {
-      $('.print_r input').val('');
-      sessionStorage.removeItem('res');
-      sessionStorage.setItem('len', $('#len').val());
-      sessionStorage.setItem('chr', $('#chr').val());
-      sessionStorage.setItem('res', JSON.stringify([]));
-      for (var i = 0; i < parseInt($('#cnt').val(), 10); i++) {
-        sendRequest();
+        })
+        .done(function(rawdata){
+          console.log(rawdata);
+          let arr=JSON.parse(sessionStorage.getItem('res'));
+          arr.push({result: rawdata.detail, len: sessionStorage.getItem('len'), chr: sessionStorage.getItem('chr')});
+          sessionStorage.setItem('res', JSON.stringify(arr));
+        })
+        .fail(function(rawdata){
+          console.log(rawdata);
+        })
+        .always(function(){
+          grecaptcha_init();
+        });
       }
-      setTimeout(function () {
-        postProc();
-      }, 250);
-    }
+      function postProc()
+      {
+        let arr=JSON.parse(sessionStorage.getItem('res')); // current
+        let hst=JSON.parse(sessionStorage.getItem('hst')); // history
+        if (hst==null) {
+          hst=arr;
+        } else {
+          hst=hst.concat(arr);
+        }
+        sessionStorage.setItem('hst', JSON.stringify(hst));
+
+        $('#main #print_r div').remove();
+        arr.forEach(function(randstr){
+          $('#main #print_r').append('<div />');
+          $('#main #print_r div:last-child').append('<input />');
+          $('#main #print_r div:last-child input:last-child').attr('readonly', true);
+          $('#main #print_r div:last-child input:last-child').val(randstr['result']);
+
+          console.log(randstr);
+          if (location.protocol=="https:") {
+            try {
+              var promise = navigator.clipboard.writeText(randstr);
+              console.log(promise);
+            } catch(e) {
+              console.log(e);
+            }
+          }
+        });
+      }
+      function sendSetup()
+      {
+        let chr=0;
+        $('input.chr:checked').each(function(){
+          chr+=parseInt($(this).val(), 10);
+        });
+        $('#chr').val(chr);
+
+        $('#print_r input').val('');
+        sessionStorage.removeItem('res');
+        sessionStorage.setItem('len', $('#len').val());
+        sessionStorage.setItem('chr', $('#chr').val());
+        sessionStorage.setItem('res', JSON.stringify([]));
+
+        for (var i=0; i < parseInt($('#cnt').val(), 10); i++) {
+          sendRequest();
+        }
+        setTimeout(function () {
+          postProc();
+        }, 250);
+      }
+
+      function loadHistory()
+      {
+        $('#sub1 #print_h table').remove();
+        $('#sub1 #print_h').append('<table />');
+        $('#sub1 #print_h table:last-child').attr('border', 1);
+        $('#sub1 #print_h table:last-child').append('<tr />');
+        $('#sub1 #print_h table:last-child tr:last-child').append('<th />');
+        $('#sub1 #print_h table:last-child tr:last-child th:last-child').text('#');
+        $('#sub1 #print_h table:last-child tr:last-child').append('<th />');
+        $('#sub1 #print_h table:last-child tr:last-child th:last-child').text('Length');
+        $('#sub1 #print_h table:last-child tr:last-child').append('<th />');
+        $('#sub1 #print_h table:last-child tr:last-child th:last-child').text('Chars');
+        $('#sub1 #print_h table:last-child tr:last-child').append('<th />');
+        $('#sub1 #print_h table:last-child tr:last-child th:last-child').text('Results');
+
+        let hst=JSON.parse(sessionStorage.getItem('hst')); // history
+        for (var i = hst.length-1; i >= 0; i--) {
+          $('#sub1 #print_h table:last-child').append('<tr />');
+          $('#sub1 #print_h table:last-child tr:last-child').append('<td />');
+          $('#sub1 #print_h table:last-child tr:last-child td:last-child').text(i);
+          $('#sub1 #print_h table:last-child tr:last-child').append('<td />');
+          $('#sub1 #print_h table:last-child tr:last-child td:last-child').text(hst[i]['len']);
+          $('#sub1 #print_h table:last-child tr:last-child').append('<td />');
+          $('#sub1 #print_h table:last-child tr:last-child td:last-child').text(hst[i]['chr']);
+          $('#sub1 #print_h table:last-child tr:last-child').append('<td />');
+          $('#sub1 #print_h table:last-child tr:last-child td:last-child').append('<input />');
+          $('#sub1 #print_h table:last-child tr:last-child td:last-child input:last-child').val(hst[i]['result']);
+        };
+
+      }
+
     </script>
 
     <script type="text/javascript">
       $(function(){
 
-        $('#len_gui').change(function(){
-          $('#len').val($(this).val());
-        });
-
-        $('#len').change(function(){
-          $('#len_gui').val($(this).val());
-        });
-
-        $('#len_gui').mousemove(function(){
-          $('#len_gui').change();
-        });
-
-        $('#cnt_gui').change(function(){
-          $('#cnt').val($(this).val());
-        });
-
-        $('#cnt').change(function(){
-          $('#cnt_gui').val($(this).val());
-        });
-
-        $('#cnt_gui').mousemove(function(){
-          $('#cnt_gui').change();
-        });
+        $('#len_gui')   .change(function(){ $('#len').val(     $(this).val()); });
+        $('#len')       .change(function(){ $('#len_gui').val( $(this).val()); });
+        $('#len_gui').mousemove(function(){ $('#len_gui').change();            });
+        $('#cnt_gui')   .change(function(){ $('#cnt').val(     $(this).val()); });
+        $('#cnt')       .change(function(){ $('#cnt_gui').val( $(this).val()); });
+        $('#cnt_gui').mousemove(function(){ $('#cnt_gui').change();            });
 
         $('#len, #len_gui').attr({
           min: 1,
@@ -145,17 +167,14 @@
           value: 1,
         });
 
-        $('input.chr').click(function(){
-          let chr=0;
-          $('input.chr:checked').each(function(){
-            chr+=parseInt($(this).val(), 10);
-          });
-          $('#chr').val(chr);
-        });
-
         sendSetup();
-        $('div.preference input[type=submit]').click(function(){ sendSetup(); });
-        $(document).on('click', 'div.print_r input', function(){
+        $('#reacquire').click(function(){ sendSetup(); });
+        $('#history_load').click(function(){ loadHistory(); });
+        $('#history_broken').click(function(){ sessionStorage.removeItem('hst'); location.reload(); });
+        $(document).on('click', 'div#print_r input', function(){
+          $(this).select();
+        });
+        $(document).on('click', 'div#print_h input', function(){
           $(this).select();
         });
 
@@ -167,25 +186,25 @@
       {
         display: none;
       }
-      section#main
+      section
       {
         margin: 0 auto;
         width: 90%;
         max-width: 720px;
       }
-      section#main div.preference, section#main div.print_r
+      section#main div.preference, section#main div#print_r
       {
         background-color: azure;
         height: 200px;
         padding-right: 15px;
       }
       @media screen and (min-width: 320px) {
-        section#main div.preference, section#main div.print_r
+        section#main div.preference, section#main div#print_r
         {
           float: left;
         }
       }
-      section#main div.print_r
+      section#main div#print_r
       {
         background-color: honeydew;
       }
@@ -197,31 +216,39 @@
       {
         width: 100%;
       }
-      section#main div.print_r div
+      section#main div#print_r div
       {
         width: 185px;
       }
-      section#main div.print_r div input
+      section#main div#print_r div input
       {
         width: 100%;
         resize: both;
+      }
+      section##sub1 div#print_h input
+      {
+        border-width: 0;
+      }
+      .float_clear_both
+      {
+        clear: both;
       }
     </style>
   </head>
   <body>
     <section id="main">
       <h3><script type="text/javascript">document.write(document.title);</script></h3>
-      <div class="preference _len">
+      <div class="preference">
         <h4>Length</h4>
         <div><input type="range" id="len_gui"></div>
         <div><input type="number" id="len"></div>
       </div>
-      <div class="preference _cnt">
-        <h4>Loop</h4>
+      <div class="preference">
+        <h4>Count</h4>
         <div><input type="range" id="cnt_gui"></div>
         <div><input type="number" id="cnt"></div>
       </div>
-      <div class="preference _chr">
+      <div class="preference">
         <h4>Chars</h4>
         <div><input type="checkbox" class="chr" id="chr_1" value="2" checked><label for="chr_1">英小字</label></div>
         <div><input type="checkbox" class="chr" id="chr_2" value="1" checked><label for="chr_2">英大字</label></div>
@@ -229,13 +256,20 @@
         <div><input type="checkbox" class="chr" id="chr_4" value="4" checked><label for="chr_4">記号</label></div>
         <div><input type="hidden" class="chr" id="chr" readonly></div>
       </div>
-      <div class="preference _chr">
+      <div class="preference">
         <h4>Ctrl</h4>
-        <div><input type="submit" value="再取得"></div>
+        <div><input type="button" id="reacquire" value="再取得"></div>
+        <div><input type="button" id="history_load" value="履歴取得"></div>
+        <div><input type="button" id="history_broken" value="履歴削除"></div>
       </div>
-      <div class="print_r _res">
+      <div id="print_r">
         <h4>Results</h4>
       </div>
+      <div class="float_clear_both"></div>
+    </section>
+    <section id="sub1">
+      <h4>History</h4>
+      <div id="print_h"></div>
     </section>
   </body>
 </html>
