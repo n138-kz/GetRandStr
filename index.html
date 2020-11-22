@@ -36,34 +36,74 @@
     </script>
     <!--==================================================-->
     <script type="text/javascript">
-      function sendRequest()
-      {
-        $.ajax({
-          url: './api/',
-          type: 'GET',
-          timeout: 5000,
-          data: {
-            len: $('#len').val(),
-            chr: $('#chr').val(),
-          }
-        })
-        .done(function(rawdata){
-          console.log(rawdata);
-        })
-        .fail(function(rawdata){
-          console.log(rawdata);
-        })
-        .always(function(){
-          grecaptcha_init();
-        });
+    function sendRequest()
+    {
+      $.ajax({
+        url: './api/',
+        type: 'GET',
+        async: true,
+        timeout: 5000,
+        data: {
+          len: sessionStorage.getItem('len'),
+          chr: sessionStorage.getItem('chr'),
+        }
+      })
+      .done(function(rawdata){
+        console.log(rawdata);
+        let arr=JSON.parse(sessionStorage.getItem('res'));
+        arr.push(rawdata.detail);
+        sessionStorage.setItem('res', JSON.stringify(arr));
+      })
+      .fail(function(rawdata){
+        console.log(rawdata);
+      })
+      .always(function(){
+        grecaptcha_init();
+      });
+    }
+    function postProc()
+    {
+      let arr=JSON.parse(sessionStorage.getItem('res')); // current
+      let hst=JSON.parse(sessionStorage.getItem('hst')); // history
+      if (hst==null) {
+        hst=arr;
+      } else {
+        hst=hst.concat(arr);
       }
+      sessionStorage.setItem('hst', JSON.stringify(hst));
+
+      $('div.print_r:last-child div').empty();
+      arr.forEach(function(i){
+        $('div.print_r:last-child').append('<div />');
+        $('div.print_r:last-child div:last-child').append('<input />');
+        $('div.print_r:last-child div:last-child input:last-child').attr('readonly', true);
+        $('div.print_r:last-child div:last-child input:last-child').val(i);
+      });
+    }
+    function sendSetup()
+    {
+      $('.print_r input').val('');
+      sessionStorage.removeItem('res');
+      sessionStorage.setItem('len', $('#len').val());
+      sessionStorage.setItem('chr', $('#chr').val());
+      sessionStorage.setItem('res', JSON.stringify([]));
+      for (var i = 0; i < 3; i++) {
+        sendRequest();
+      }
+      setTimeout(function () {
+        postProc();
+      }, 500);
+    }
     </script>
 
     <script type="text/javascript">
       $(function(){
-        $('input[type="submit"]').click(function(){
-          sendRequest();
-          return false;
+
+        sendSetup();
+        $('div.preference input[type=submit]').click(function(){ sendSetup(); });
+        $(document).on('click', 'div.print_r input', function(){
+          console.log($(this));
+          $(this).select();
         });
 
         $('#len_gui').change(function(){
@@ -73,6 +113,14 @@
         $('#len, #len_gui').attr({
           min: 1,
           value: 8,
+        });
+
+        $('input.chr').click(function(){
+          let chr=0;
+          $('input.chr:checked').each(function(){
+            chr+=parseInt($(this).val(), 10);
+          });
+          $('#chr').val(chr);
         });
       });
     </script>
@@ -88,22 +136,33 @@
         width: 90%;
         max-width: 720px;
       }
-      section#main div.preference
+      section#main div.preference, section#main div.print_r
       {
         background-color: azure;
         float: left;
         height: 200px;
         padding-right: 15px;
       }
+      section#main div.print_r
+      {
+        background-color: honeydew;
+      }
       section#main div.preference div
       {
         width: 85px;
       }
-      {
-      }
       section#main div.preference div input:not([type=checkbox])
       {
         width: 100%;
+      }
+      section#main div.print_r div
+      {
+        width: 185px;
+      }
+      section#main div.print_r div input
+      {
+        width: 100%;
+        resize: both;
       }
     </style>
   </head>
@@ -111,16 +170,24 @@
     <section id="main">
       <h3><script type="text/javascript">document.write(document.title);</script></h3>
       <div class="preference _len">
-        <h4>文字数</h4>
+        <h4>Length</h4>
         <div><input type="range" id="len_gui"></div>
         <div><input type="number" id="len"></div>
       </div>
       <div class="preference _chr">
-        <h4>文字型</h4>
-        <div><input type="checkbox" id="chr_1" checked><label for="chr_1">英小字</label></div>
-        <div><input type="checkbox" id="chr_2" checked><label for="chr_2">英大字</label></div>
-        <div><input type="checkbox" id="chr_3" checked><label for="chr_3">数字</label></div>
-        <div><input type="checkbox" id="chr_4" checked><label for="chr_4">記号</label></div>
+        <h4>Chars</h4>
+        <div><input type="checkbox" class="chr" id="chr_1" value="2" checked><label for="chr_1">英小字</label></div>
+        <div><input type="checkbox" class="chr" id="chr_2" value="1" checked><label for="chr_2">英大字</label></div>
+        <div><input type="checkbox" class="chr" id="chr_3" value="8" checked><label for="chr_3">数字</label></div>
+        <div><input type="checkbox" class="chr" id="chr_4" value="4" checked><label for="chr_4">記号</label></div>
+        <div><input type="hidden" class="chr" id="chr" readonly></div>
+      </div>
+      <div class="preference _chr">
+        <h4>Ctrl</h4>
+        <div><input type="submit" value="再取得"></div>
+      </div>
+      <div class="print_r _res">
+        <h4>Results</h4>
       </div>
     </section>
   </body>
