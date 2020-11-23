@@ -43,11 +43,15 @@
           url: './api/',
           type: 'GET',
           async: true,
-          timeout: 5000,
+          timeout: parseInt($('#tmout').val(), 10),
+          beforeSend: function(xhr, setting) {
+            $('#print_r input').val('Processing...');
+            console.log([xhr, setting]);
+          },
           data: {
             len: sessionStorage.getItem('len'),
             chr: sessionStorage.getItem('chr'),
-          }
+          },
         })
         .done(function(rawdata){
           console.log(rawdata);
@@ -93,24 +97,35 @@
       }
       function sendSetup()
       {
+        // チェックボックス取得
         let chr=0;
         $('input.chr:checked').each(function(){
           chr+=parseInt($(this).val(), 10);
         });
         $('#chr').val(chr);
 
+        // 入力されているパラメータの正規化
+        if($('#len').val().length   == 0 || ! parseInt($('#len').val(), 10) > 0   ) { $('#len').val('8');     $('#len_gui')  .val($('#len')  .val()); }
+        if($('#chr').val().length   == 0 || ! parseInt($('#chr').val(), 10) > 0   ) { $('#chr').val('15');    $('#chr_gui')  .val($('#chr')  .val()); }
+        if($('#cnt').val().length   == 0 || ! parseInt($('#cnt').val(), 10) > 0   ) { $('#cnt').val('1');     $('#cnt_gui')  .val($('#cnt')  .val()); }
+        if($('#tmout').val().length == 0 || ! parseInt($('#tmout').val(), 10) > 0 ) { $('#tmout').val('300'); $('#tmout_gui').val($('#tmout').val()); }
+
+        // 入力されているパラメータを使用
         $('#print_r input').val('');
         sessionStorage.removeItem('res');
         sessionStorage.setItem('len', $('#len').val());
         sessionStorage.setItem('chr', $('#chr').val());
         sessionStorage.setItem('res', JSON.stringify([]));
 
+        // 指定回数分リクエストを投げる
         for (var i=0; i < parseInt($('#cnt').val(), 10); i++) {
           sendRequest();
         }
+
+        // 非同期で帰ってきたであろうレスポンスを処理
         setTimeout(function () {
           postProc();
-        }, 250);
+        }, parseInt($('#tmout').val(), 10));
       }
 
       function loadHistory()
@@ -164,22 +179,36 @@
           }
         });
 
-        $('#len_gui')   .change(function(){ $('#len').val(     $(this).val()); });
-        $('#len')       .change(function(){ $('#len_gui').val( $(this).val()); });
-        $('#len_gui').mousemove(function(){ $('#len_gui').change();            });
-        $('#cnt_gui')   .change(function(){ $('#cnt').val(     $(this).val()); });
-        $('#cnt')       .change(function(){ $('#cnt_gui').val( $(this).val()); });
-        $('#cnt_gui').mousemove(function(){ $('#cnt_gui').change();            });
+        $('#len_gui')     .change(function(){ $('#len')  .val(     $(this).val()); });
+        $('#len')         .change(function(){ $('#len_gui')  .val( $(this).val()); });
+        $('#len_gui')  .mousemove(function(){ $('#len_gui')  .change();            });
+        $('#cnt_gui')     .change(function(){ $('#cnt')  .val(     $(this).val()); });
+        $('#cnt')         .change(function(){ $('#cnt_gui')  .val( $(this).val()); });
+        $('#cnt_gui')  .mousemove(function(){ $('#cnt_gui')  .change();            });
+        $('#tmout_gui')   .change(function(){ $('#tmout').val(     $(this).val()); });
+        $('#tmout')       .change(function(){ $('#tmout_gui').val( $(this).val()); });
+        $('#tmout_gui').mousemove(function(){ $('#tmout_gui').change();            });
 
         $('#len, #len_gui').attr({
           min: 1,
+          max: 999,
           value: 8,
+          step: 1,
         });
 
         $('#cnt, #cnt_gui').attr({
           min: 1,
           max: 9,
           value: 1,
+          step: 1,
+        });
+
+        $('#tmout, #tmout_gui').attr({
+          min: 100,
+          max: 5000,
+          value: 300,
+          step: 100,
+          placeholder: '* ms',
         });
 
         sendSetup();
@@ -285,6 +314,11 @@
         <h4>Count</h4>
         <div><input type="range" id="cnt_gui"></div>
         <div><input type="number" id="cnt"></div>
+      </div>
+      <div class="preference">
+        <h4>Time</h4>
+        <div><input type="range" id="tmout_gui"></div>
+        <div><input type="number" id="tmout"></div>
       </div>
       <div class="preference">
         <h4>Chars</h4>
