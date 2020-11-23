@@ -151,6 +151,22 @@
           $('#sub1 #print_h table:last-child tr:last-child').append('<td />');
           $('#sub1 #print_h table:last-child tr:last-child td:last-child').text(hst[i]['len']);
           $('#sub1 #print_h table:last-child tr:last-child').append('<td />');
+          if (false) {}
+          else if (parseInt(hst[i]['chr'], 10)==15) { hst[i]['chr']='ALL';                    }
+          else if (parseInt(hst[i]['chr'], 10)==14) { hst[i]['chr']='No Alphabet Upper';      }
+          else if (parseInt(hst[i]['chr'], 10)==13) { hst[i]['chr']='No Alphabet Lower';      }
+          else if (parseInt(hst[i]['chr'], 10)==12) { hst[i]['chr']='No Alphabet';            }
+          else if (parseInt(hst[i]['chr'], 10)==11) { hst[i]['chr']='No symbols';             }
+          else if (parseInt(hst[i]['chr'], 10)==10) { hst[i]['chr']='Alphabet Lower+Numeric'; }
+          else if (parseInt(hst[i]['chr'], 10)==9)  { hst[i]['chr']='Alphabet Upper+Numeric'; }
+          else if (parseInt(hst[i]['chr'], 10)==8)  { hst[i]['chr']='Numeric';                }
+          else if (parseInt(hst[i]['chr'], 10)==7)  { hst[i]['chr']='No Numeric';             }
+          else if (parseInt(hst[i]['chr'], 10)==6)  { hst[i]['chr']='Alphabet Lower+Symbols'; }
+          else if (parseInt(hst[i]['chr'], 10)==5)  { hst[i]['chr']='Alphabet Upper+Symbols'; }
+          else if (parseInt(hst[i]['chr'], 10)==4)  { hst[i]['chr']='Symbols';                }
+          else if (parseInt(hst[i]['chr'], 10)==3)  { hst[i]['chr']='Alphabet';               }
+          else if (parseInt(hst[i]['chr'], 10)==2)  { hst[i]['chr']='Alphabet Lower';         }
+          else if (parseInt(hst[i]['chr'], 10)==1)  { hst[i]['chr']='Alphabet Upper';         }
           $('#sub1 #print_h table:last-child tr:last-child td:last-child').text(hst[i]['chr']);
           $('#sub1 #print_h table:last-child tr:last-child').append('<td />');
           $('#sub1 #print_h table:last-child tr:last-child td:last-child').append('<input />');
