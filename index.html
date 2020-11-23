@@ -43,20 +43,24 @@
           url: './api/',
           type: 'GET',
           async: true,
-          timeout: 5000,
+          timeout: parseInt($('#tmout').val(), 10),
+          beforeSend: function(xhr, setting) {
+            $('#print_r input').val('Processing...');
+            console.debug([xhr, setting]);
+          },
           data: {
             len: sessionStorage.getItem('len'),
             chr: sessionStorage.getItem('chr'),
-          }
+          },
         })
         .done(function(rawdata){
-          console.log(rawdata);
+          console.debug(rawdata);
           let arr=JSON.parse(sessionStorage.getItem('res'));
           arr.push({result: rawdata.detail, len: sessionStorage.getItem('len'), chr: sessionStorage.getItem('chr')});
           sessionStorage.setItem('res', JSON.stringify(arr));
         })
         .fail(function(rawdata){
-          console.log(rawdata);
+          console.debug(rawdata);
         })
         .always(function(){
           grecaptcha_init();
@@ -84,33 +88,44 @@
           if (location.protocol=="https:") {
             try {
               var promise = navigator.clipboard.writeText(randstr['result']);
-              console.log(promise);
+              console.debug(promise);
             } catch(e) {
-              console.log(e);
+              console.debug(e);
             }
           }
         });
       }
       function sendSetup()
       {
+        // チェックボックス取得
         let chr=0;
         $('input.chr:checked').each(function(){
           chr+=parseInt($(this).val(), 10);
         });
         $('#chr').val(chr);
 
+        // 入力されているパラメータの正規化
+        if($('#len').val().length   == 0 || ! parseInt($('#len').val(), 10) > 0   ) { $('#len').val('8');     $('#len_gui')  .val($('#len')  .val()); }
+        if($('#chr').val().length   == 0 || ! parseInt($('#chr').val(), 10) > 0   ) { $('#chr').val('15');    $('#chr_gui')  .val($('#chr')  .val()); }
+        if($('#cnt').val().length   == 0 || ! parseInt($('#cnt').val(), 10) > 0   ) { $('#cnt').val('1');     $('#cnt_gui')  .val($('#cnt')  .val()); }
+        if($('#tmout').val().length == 0 || ! parseInt($('#tmout').val(), 10) > 0 ) { $('#tmout').val('300'); $('#tmout_gui').val($('#tmout').val()); }
+
+        // 入力されているパラメータを使用
         $('#print_r input').val('');
         sessionStorage.removeItem('res');
         sessionStorage.setItem('len', $('#len').val());
         sessionStorage.setItem('chr', $('#chr').val());
         sessionStorage.setItem('res', JSON.stringify([]));
 
+        // 指定回数分リクエストを投げる
         for (var i=0; i < parseInt($('#cnt').val(), 10); i++) {
           sendRequest();
         }
+
+        // 非同期で帰ってきたであろうレスポンスを処理
         setTimeout(function () {
           postProc();
-        }, 250);
+        }, parseInt($('#tmout').val(), 10));
       }
 
       function loadHistory()
@@ -136,6 +151,22 @@
           $('#sub1 #print_h table:last-child tr:last-child').append('<td />');
           $('#sub1 #print_h table:last-child tr:last-child td:last-child').text(hst[i]['len']);
           $('#sub1 #print_h table:last-child tr:last-child').append('<td />');
+          if (false) {}
+          else if (parseInt(hst[i]['chr'], 10)==15) { hst[i]['chr']='ALL';                    }
+          else if (parseInt(hst[i]['chr'], 10)==14) { hst[i]['chr']='No Alphabet Upper';      }
+          else if (parseInt(hst[i]['chr'], 10)==13) { hst[i]['chr']='No Alphabet Lower';      }
+          else if (parseInt(hst[i]['chr'], 10)==12) { hst[i]['chr']='No Alphabet';            }
+          else if (parseInt(hst[i]['chr'], 10)==11) { hst[i]['chr']='No symbols';             }
+          else if (parseInt(hst[i]['chr'], 10)==10) { hst[i]['chr']='Alphabet Lower+Numeric'; }
+          else if (parseInt(hst[i]['chr'], 10)==9)  { hst[i]['chr']='Alphabet Upper+Numeric'; }
+          else if (parseInt(hst[i]['chr'], 10)==8)  { hst[i]['chr']='Numeric';                }
+          else if (parseInt(hst[i]['chr'], 10)==7)  { hst[i]['chr']='No Numeric';             }
+          else if (parseInt(hst[i]['chr'], 10)==6)  { hst[i]['chr']='Alphabet Lower+Symbols'; }
+          else if (parseInt(hst[i]['chr'], 10)==5)  { hst[i]['chr']='Alphabet Upper+Symbols'; }
+          else if (parseInt(hst[i]['chr'], 10)==4)  { hst[i]['chr']='Symbols';                }
+          else if (parseInt(hst[i]['chr'], 10)==3)  { hst[i]['chr']='Alphabet';               }
+          else if (parseInt(hst[i]['chr'], 10)==2)  { hst[i]['chr']='Alphabet Lower';         }
+          else if (parseInt(hst[i]['chr'], 10)==1)  { hst[i]['chr']='Alphabet Upper';         }
           $('#sub1 #print_h table:last-child tr:last-child td:last-child').text(hst[i]['chr']);
           $('#sub1 #print_h table:last-child tr:last-child').append('<td />');
           $('#sub1 #print_h table:last-child tr:last-child td:last-child').append('<input />');
@@ -164,22 +195,36 @@
           }
         });
 
-        $('#len_gui')   .change(function(){ $('#len').val(     $(this).val()); });
-        $('#len')       .change(function(){ $('#len_gui').val( $(this).val()); });
-        $('#len_gui').mousemove(function(){ $('#len_gui').change();            });
-        $('#cnt_gui')   .change(function(){ $('#cnt').val(     $(this).val()); });
-        $('#cnt')       .change(function(){ $('#cnt_gui').val( $(this).val()); });
-        $('#cnt_gui').mousemove(function(){ $('#cnt_gui').change();            });
+        $('#len_gui')     .change(function(){ $('#len')  .val(     $(this).val()); });
+        $('#len')         .change(function(){ $('#len_gui')  .val( $(this).val()); });
+        $('#len_gui')  .mousemove(function(){ $('#len_gui')  .change();            });
+        $('#cnt_gui')     .change(function(){ $('#cnt')  .val(     $(this).val()); });
+        $('#cnt')         .change(function(){ $('#cnt_gui')  .val( $(this).val()); });
+        $('#cnt_gui')  .mousemove(function(){ $('#cnt_gui')  .change();            });
+        $('#tmout_gui')   .change(function(){ $('#tmout').val(     $(this).val()); });
+        $('#tmout')       .change(function(){ $('#tmout_gui').val( $(this).val()); });
+        $('#tmout_gui').mousemove(function(){ $('#tmout_gui').change();            });
 
         $('#len, #len_gui').attr({
           min: 1,
+          max: 999,
           value: 8,
+          step: 1,
         });
 
         $('#cnt, #cnt_gui').attr({
           min: 1,
           max: 9,
           value: 1,
+          step: 1,
+        });
+
+        $('#tmout, #tmout_gui').attr({
+          min: 100,
+          max: 5000,
+          value: 300,
+          step: 100,
+          placeholder: '* ms',
         });
 
         sendSetup();
@@ -189,13 +234,13 @@
         $(document).on('click', 'div#print_r input', function(){
           $(this).select();
           if (location.protocol=="https:") {
-            try { var promise = navigator.clipboard.writeText($(this).val()); console.log(promise); } catch(e) { console.log(e); }
+            try { var promise = navigator.clipboard.writeText($(this).val()); console.debug(promise); } catch(e) { console.debug(e); }
           }
         });
         $(document).on('click', 'div#print_h input', function(){
           $(this).select();
           if (location.protocol=="https:") {
-            try { var promise = navigator.clipboard.writeText($(this).val()); console.log(promise); } catch(e) { console.log(e); }
+            try { var promise = navigator.clipboard.writeText($(this).val()); console.debug(promise); } catch(e) { console.debug(e); }
           }
         });
 
@@ -285,6 +330,11 @@
         <h4>Count</h4>
         <div><input type="range" id="cnt_gui"></div>
         <div><input type="number" id="cnt"></div>
+      </div>
+      <div class="preference">
+        <h4>Time</h4>
+        <div><input type="range" id="tmout_gui"></div>
+        <div><input type="number" id="tmout"></div>
       </div>
       <div class="preference">
         <h4>Chars</h4>
