@@ -119,13 +119,15 @@
 
         // 指定回数分リクエストを投げる
         for (var i=0; i < parseInt($('#cnt').val(), 10); i++) {
-          sendRequest();
+          setTimeout(function(){
+            sendRequest();
+          }, 250);
         }
 
         // 非同期で帰ってきたであろうレスポンスを処理
         setTimeout(function () {
           postProc();
-        }, parseInt($('#tmout').val(), 10));
+        }, (parseInt($('#tmout').val(), 10)+250));
       }
 
       function loadHistory()
