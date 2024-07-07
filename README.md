@@ -1,4 +1,5 @@
-# GetRandStr (Class)
+# [GetRandStr (Class)](https://github.com/n138-kz/GetRandStr)
+
 ![URI](http://img.shields.io/badge/state-active-blue.svg?style=flat)
 
 ## Before use
